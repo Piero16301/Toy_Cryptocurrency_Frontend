@@ -20,18 +20,18 @@ class CheckAuthPage extends StatelessWidget {
           }
 
           if (snapshot.data == '') {
-            // Future.microtask(() {
-            //   Navigator.pushReplacement(context, PageRouteBuilder(
-            //     pageBuilder: (_, __, ___) => const LoginPage(),
-            //     transitionDuration: const Duration(seconds: 0),
-            //   ));
-            // });
             Future.microtask(() {
               Navigator.pushReplacement(context, PageRouteBuilder(
-                pageBuilder: (_, __, ___) => const HomePage(),
+                pageBuilder: (_, __, ___) => const LoginPage(),
                 transitionDuration: const Duration(seconds: 0),
               ));
             });
+            // Future.microtask(() {
+            //   Navigator.pushReplacement(context, PageRouteBuilder(
+            //     pageBuilder: (_, __, ___) => const HomePage(),
+            //     transitionDuration: const Duration(seconds: 0),
+            //   ));
+            // });
           } else {
             Future.microtask(() {
               Navigator.pushReplacement(context, PageRouteBuilder(

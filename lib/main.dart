@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:toy_cryptocurrency_frontend/pages/pages.dart';
 import 'package:toy_cryptocurrency_frontend/providers/providers.dart';
 import 'package:toy_cryptocurrency_frontend/services/services.dart';
-import 'package:toy_cryptocurrency_frontend/shared_preferences/preferences.dart';
+import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

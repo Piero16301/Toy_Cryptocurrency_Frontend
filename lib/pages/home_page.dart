@@ -1,11 +1,25 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+import 'package:toy_cryptocurrency_frontend/pages/pages.dart';
+import 'package:toy_cryptocurrency_frontend/pages/settings_page.dart';
+import 'package:toy_cryptocurrency_frontend/providers/providers.dart';
+
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentPage = 0;
+
+  @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return NavigationView(
       appBar: NavigationAppBar(
         title: Padding(
@@ -16,22 +30,71 @@ class HomePage extends StatelessWidget {
           ),
         ),
         leading: Center(
-          child: SvgPicture.asset('assets/bitcoin-logo.svg'),
+          child: SvgPicture.asset(
+            'assets/bitcoin-logo.svg',
+            color: (themeProvider.currentThemeName == 'light') 
+              ? Colors.black 
+              : Colors.white,
+            fit: BoxFit.fitHeight,
+          ),
+        ),
+        actions: Padding(
+          padding: const EdgeInsets.only(right: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              DefaultTextStyle(
+                style: FluentTheme.of(context).typography.bodyLarge!
+                    .copyWith(fontWeight: FontWeight.bold),
+                child: const Text('Piero Morales'),
+              ),
+              DefaultTextStyle(
+                style: FluentTheme.of(context).typography.body!,
+                child: const Text('piero.morales@utec.edu.pe'),
+              ),
+            ],
+          ),
         ),
       ),
       pane: NavigationPane(
         header: Padding(
-          padding: const EdgeInsets.only(left: 12),
+          padding: const EdgeInsets.only(left: 14),
           child: DefaultTextStyle(
-            style: FluentTheme.of(context).typography.bodyLarge!,
-            child: const Text('Piero Morales'),
+            style: FluentTheme.of(context).typography.bodyStrong!,
+            child: const Text('ID: 26816381637193234'),
           ),
         ),
         items: [
           PaneItem(
-            icon: const Icon(FluentIcons.home),
-            title: const Text('Inicio'),
+            icon: const Icon(FluentIcons.money),
+            title: const Text('Saldo'),
           ),
+          PaneItem(
+            icon: const Icon(FluentIcons.all_apps),
+            title: const Text('Transacciones'),
+          ),
+        ],
+        selected: _currentPage,
+        displayMode: PaneDisplayMode.auto,
+        onChanged: (i) {
+          setState(() {
+            _currentPage = i;
+          });
+        },
+        footerItems: [
+          PaneItemSeparator(),
+          PaneItem(
+            icon: const Icon(FluentIcons.settings),
+            title: const Text('Ajustes'),
+          ),
+        ],
+      ),
+      content: NavigationBody(
+        index: _currentPage,
+        children: const [
+          BalancePage(),
+          TransactionsPage(),
+          SettingsPage(),
         ],
       ),
     );
