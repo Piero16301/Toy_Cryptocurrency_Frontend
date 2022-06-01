@@ -19,8 +19,11 @@ class AppState extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: ( _ ) => ThemeProvider(isDarkMode: Preferences.isDarkMode)),
-        ChangeNotifierProvider(create: ( _ ) => AuthService()),
+        ChangeNotifierProvider(create: (_) => LoginFormProvider()),
+        ChangeNotifierProvider(create: (_) => RegisterFormProvider()),
+        ChangeNotifierProvider(
+            create: (_) => ThemeProvider(isDarkMode: Preferences.isDarkMode)),
+        ChangeNotifierProvider(create: (_) => AuthService()),
       ],
       child: const MyApp(),
     );
@@ -37,9 +40,10 @@ class MyApp extends StatelessWidget {
       title: 'Toy Cryptocurrency',
       initialRoute: '/check_auth',
       routes: {
-        '/check_auth': ( _ ) => const CheckAuthPage(),
-        '/login': ( _ ) => const LoginPage(),
-        '/home': ( _ ) => const HomePage(),
+        '/check_auth': (_) => const CheckAuthPage(),
+        '/login': (_) => const LoginPage(),
+        '/register': (_) => const RegisterPage(),
+        '/home': (_) => const HomePage(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,
     );

@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import 'package:toy_cryptocurrency_frontend/pages/pages.dart';
-import 'package:toy_cryptocurrency_frontend/pages/settings_page.dart';
 import 'package:toy_cryptocurrency_frontend/providers/providers.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,25 +31,38 @@ class _HomePageState extends State<HomePage> {
         leading: Center(
           child: SvgPicture.asset(
             'assets/bitcoin-logo.svg',
-            color: (themeProvider.currentThemeName == 'light') 
-              ? Colors.black 
-              : Colors.white,
+            color: (themeProvider.currentThemeName == 'light')
+                ? Colors.black
+                : Colors.white,
             fit: BoxFit.fitHeight,
           ),
         ),
         actions: Padding(
           padding: const EdgeInsets.only(right: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              DefaultTextStyle(
-                style: FluentTheme.of(context).typography.bodyLarge!
-                    .copyWith(fontWeight: FontWeight.bold),
-                child: const Text('Piero Morales'),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  DefaultTextStyle(
+                    style: FluentTheme.of(context)
+                        .typography
+                        .bodyLarge!
+                        .copyWith(fontWeight: FontWeight.bold),
+                    child: const Text('Piero Morales'),
+                  ),
+                  DefaultTextStyle(
+                    style: FluentTheme.of(context).typography.body!,
+                    child: const Text('piero.morales@utec.edu.pe'),
+                  ),
+                ],
               ),
-              DefaultTextStyle(
-                style: FluentTheme.of(context).typography.body!,
-                child: const Text('piero.morales@utec.edu.pe'),
+              const SizedBox(width: 10),
+              IconButton(
+                icon: const Icon(FluentIcons.close_pane, size: 30),
+                onPressed: () =>
+                    Navigator.pushReplacementNamed(context, '/login'),
               ),
             ],
           ),
