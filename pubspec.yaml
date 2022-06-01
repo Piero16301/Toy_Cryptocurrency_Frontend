@@ -106,7 +106,7 @@ msix_config:
   publisher_display_name: Piero Morales
   identity_name: com.toy.cryptocurrency.utec
   app_installer:
-    publish_folder_path: C:\Users\piero\Downloads
+    publish_folder_path: C:\Users\piero\Downloads\Toy_Cryprocurrency_Deploy
     hours_between_update_checks: 0
     automatic_background_task: true
     update_blocks_activation: true
