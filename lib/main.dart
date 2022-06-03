@@ -4,6 +4,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 
 import 'package:toy_cryptocurrency_frontend/pages/pages.dart';
+import 'package:toy_cryptocurrency_frontend/pages/verification_register.dart';
 import 'package:toy_cryptocurrency_frontend/providers/providers.dart';
 import 'package:toy_cryptocurrency_frontend/services/services.dart';
 import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
@@ -31,6 +32,7 @@ class AppState extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => LoginFormProvider()),
         ChangeNotifierProvider(create: (_) => RegisterFormProvider()),
+        ChangeNotifierProvider(create: (_) => VerificationFormProvider()),
         ChangeNotifierProvider(
             create: (_) => ThemeProvider(isDarkMode: Preferences.isDarkMode)),
         ChangeNotifierProvider(create: (_) => AuthService()),
@@ -52,7 +54,9 @@ class MyApp extends StatelessWidget {
       routes: {
         '/check_auth': (_) => const CheckAuthPage(),
         '/login': (_) => const LoginPage(),
+        '/verification_login': (_) => const VerificationLoginPage(),
         '/register': (_) => const RegisterPage(),
+        '/verification_register': (_) => const VerificationRegisterPage(),
         '/home': (_) => const HomePage(),
       },
       theme: Provider.of<ThemeProvider>(context).currentTheme,

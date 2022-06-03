@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import 'package:toy_cryptocurrency_frontend/pages/pages.dart';
 import 'package:toy_cryptocurrency_frontend/providers/providers.dart';
+import 'package:toy_cryptocurrency_frontend/services/services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -60,10 +61,8 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(width: 10),
               IconButton(
-                icon: const Icon(FluentIcons.close_pane, size: 30),
-                onPressed: () =>
-                    Navigator.pushReplacementNamed(context, '/login'),
-              ),
+                  icon: const Icon(FluentIcons.close_pane, size: 30),
+                  onPressed: () => _showLogoutOptions(context)),
             ],
           ),
         ),
@@ -110,5 +109,29 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  void _showLogoutOptions(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) => ContentDialog(
+              title: const Text('Cerrar sesión'),
+              content: const Text('¿Seguro que desea cerrar la sesión?'),
+              actions: [
+                Button(
+                  child: const Text('No'),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                FilledButton(
+                    child: const Text('Sí'),
+                    onPressed: () async {
+                      final authService =
+                          Provider.of<AuthService>(context, listen: false);
+                      await authService.logout();
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushReplacementNamed(context, '/login');
+                    }),
+              ],
+            ));
   }
 }

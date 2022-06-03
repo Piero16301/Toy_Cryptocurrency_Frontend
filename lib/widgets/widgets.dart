@@ -21,6 +21,7 @@ class _SwitcherThemeState extends State<SwitcherTheme> {
   Widget build(BuildContext context) {
     return Positioned(
       right: 20,
+      bottom: 15,
       child: ToggleSwitch(
         checked: Preferences.isDarkMode,
         onChanged: (value) {

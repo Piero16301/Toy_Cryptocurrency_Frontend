@@ -1,7 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:toy_cryptocurrency_frontend/models/models.dart';
 
 import 'package:toy_cryptocurrency_frontend/providers/providers.dart';
+import 'package:toy_cryptocurrency_frontend/services/services.dart';
 import 'package:toy_cryptocurrency_frontend/values/values.dart';
 import 'package:toy_cryptocurrency_frontend/widgets/widgets.dart';
 
@@ -14,6 +16,7 @@ class RegisterPage extends StatelessWidget {
     final registerForm = Provider.of<RegisterFormProvider>(context);
 
     return ScaffoldPage(
+      header: const PageHeader(title: Text('Registrarse')),
       content: Stack(
         children: [
           SwitcherTheme(themeProvider: themeProvider),
@@ -26,14 +29,14 @@ class RegisterPage extends StatelessWidget {
                 children: [
                   LogoAndTitle(themeProvider: themeProvider),
                   const SizedBox(height: 20),
-                  FirstNameForm(registerForm: registerForm),
-                  const SizedBox(height: 10),
-                  LastNameForm(registerForm: registerForm),
-                  const SizedBox(height: 10),
-                  CountryForm(registerForm: registerForm),
-                  const SizedBox(height: 25),
+                  RegisterFirstNameForm(registerForm: registerForm),
+                  // const SizedBox(height: 5),
+                  RegisterLastNameForm(registerForm: registerForm),
+                  // const SizedBox(height: 5),
+                  RegisterCountryForm(registerForm: registerForm),
+                  const SizedBox(height: 15),
                   RegisterEmailForm(registerForm: registerForm),
-                  const SizedBox(height: 10),
+                  // const SizedBox(height: 10),
                   RegisterPasswordForm(registerForm: registerForm),
                   const SizedBox(height: 10),
                   const RegisterButtonForm(),
@@ -47,8 +50,9 @@ class RegisterPage extends StatelessWidget {
   }
 }
 
-class FirstNameForm extends StatelessWidget {
-  const FirstNameForm({Key? key, required this.registerForm}) : super(key: key);
+class RegisterFirstNameForm extends StatelessWidget {
+  const RegisterFirstNameForm({Key? key, required this.registerForm})
+      : super(key: key);
 
   final RegisterFormProvider registerForm;
 
@@ -77,8 +81,9 @@ class FirstNameForm extends StatelessWidget {
   }
 }
 
-class LastNameForm extends StatelessWidget {
-  const LastNameForm({Key? key, required this.registerForm}) : super(key: key);
+class RegisterLastNameForm extends StatelessWidget {
+  const RegisterLastNameForm({Key? key, required this.registerForm})
+      : super(key: key);
 
   final RegisterFormProvider registerForm;
 
@@ -107,8 +112,8 @@ class LastNameForm extends StatelessWidget {
   }
 }
 
-class CountryForm extends StatelessWidget {
-  const CountryForm({
+class RegisterCountryForm extends StatelessWidget {
+  const RegisterCountryForm({
     Key? key,
     required this.registerForm,
   }) : super(key: key);
@@ -130,6 +135,10 @@ class CountryForm extends StatelessWidget {
           // },
           placeholder: 'Ingresa tu país',
           onSelected: (text) => registerForm.country = text,
+          leadingIcon: const Padding(
+            padding: EdgeInsetsDirectional.only(start: 8.0),
+            child: Icon(FluentIcons.flag),
+          ),
         ),
       ),
     );
@@ -203,7 +212,7 @@ class _RegisterPasswordFormState extends State<RegisterPasswordForm> {
           onPressed: () => setState(() => _showPassword = !_showPassword),
         ),
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        onChanged: (text) => widget.registerForm.password,
+        onChanged: (text) => widget.registerForm.password = text,
         validator: (text) {
           if (text == null || text.isEmpty) return 'Ingresa tu contraseña';
 
@@ -235,21 +244,59 @@ class RegisterButtonForm extends StatelessWidget {
             ? null
             : () async {
                 FocusScope.of(context).unfocus();
+
+                // Navigator.pushReplacementNamed(context, '/verification_login');
+
                 if (!registerForm.isValidForm()) return;
 
+                // Enviar solicitud de código a backend
+                final authService =
+                    Provider.of<AuthService>(context, listen: false);
                 registerForm.isLoading = true;
 
-                await Future.delayed(const Duration(seconds: 2));
-
-                registerForm.isLoading = false;
-
-                // ignore: use_build_context_synchronously
-                Navigator.pushReplacementNamed(context, '/home');
+                // Crear objeto UserModel y enviar POST
+                UserModel userModel = UserModel(
+                  firstName: registerForm.firstName,
+                  lastName: registerForm.lastName,
+                  country: registerForm.country,
+                  email: registerForm.email,
+                  password: registerForm.password,
+                  publicKey: "Public Key",
+                  privateKey: "Private Key",
+                );
+                final String? errorMessage =
+                    await authService.sendSecurityCodeRegister(userModel);
+                if (errorMessage != null) {
+                  registerForm.isLoading = false;
+                  // ignore: use_build_context_synchronously
+                  _showErrorDialog(context, errorMessage);
+                } else {
+                  registerForm.isLoading = false;
+                  // ignore: use_build_context_synchronously
+                  Navigator.pushReplacementNamed(
+                      context, '/verification_register',
+                      arguments: userModel);
+                }
               },
         child: Text(
           registerForm.isLoading ? 'Espere...' : 'Registrarse',
         ),
       ),
     );
+  }
+
+  void _showErrorDialog(BuildContext context, String errorMessage) {
+    showDialog(
+        context: context,
+        builder: (_) => ContentDialog(
+              title: const Text('Error'),
+              content: Text(errorMessage),
+              actions: [
+                FilledButton(
+                  child: const Text('Ok'),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ));
   }
 }
