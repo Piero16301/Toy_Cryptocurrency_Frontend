@@ -35,7 +35,7 @@ class VerificationLoginPage extends StatelessWidget {
                   const SizedBox(height: 20),
                   LoginSendCodeButton(userModel: userModel),
                   const SizedBox(height: 40),
-                  LoginCancelButton(),
+                  const LoginCancelButton(),
                 ],
               ),
             ),

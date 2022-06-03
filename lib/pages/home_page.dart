@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import 'package:toy_cryptocurrency_frontend/pages/pages.dart';
+import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
 import 'package:toy_cryptocurrency_frontend/providers/providers.dart';
 import 'package:toy_cryptocurrency_frontend/services/services.dart';
 
@@ -44,18 +45,20 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   DefaultTextStyle(
                     style: FluentTheme.of(context)
                         .typography
                         .bodyLarge!
                         .copyWith(fontWeight: FontWeight.bold),
-                    child: const Text('Piero Morales'),
+                    child: Text(
+                        '${Preferences.userFirstName} ${Preferences.userLastName}'),
                   ),
                   DefaultTextStyle(
                     style: FluentTheme.of(context).typography.body!,
-                    child: const Text('piero.morales@utec.edu.pe'),
+                    child: Text(
+                        '${Preferences.userEmail} - ${Preferences.userCountry}'),
                   ),
                 ],
               ),
@@ -72,7 +75,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.only(left: 14),
           child: DefaultTextStyle(
             style: FluentTheme.of(context).typography.bodyStrong!,
-            child: const Text('ID: 26816381637193234'),
+            child: Text('ID: ${Preferences.userId}'),
           ),
         ),
         items: [
