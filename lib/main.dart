@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'package:toy_cryptocurrency_frontend/pages/pages.dart';
 import 'package:toy_cryptocurrency_frontend/pages/verification_register.dart';
+import 'package:toy_cryptocurrency_frontend/preferences/aes_encrypt.dart';
 import 'package:toy_cryptocurrency_frontend/providers/providers.dart';
 import 'package:toy_cryptocurrency_frontend/services/services.dart';
 import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
@@ -13,6 +14,7 @@ import 'package:window_size/window_size.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Preferences.init();
+  AESEncrypt.init();
 
   // Modificación de mínimo tamaño de ventana
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
@@ -32,7 +34,6 @@ class AppState extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => LoginFormProvider()),
         ChangeNotifierProvider(create: (_) => RegisterFormProvider()),
-        ChangeNotifierProvider(create: (_) => VerificationFormProvider()),
         ChangeNotifierProvider(
             create: (_) => ThemeProvider(isDarkMode: Preferences.isDarkMode)),
         ChangeNotifierProvider(create: (_) => AuthService()),

@@ -13,16 +13,35 @@ class VerificationLoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    final verificationForm = Provider.of<VerificationFormProvider>(context);
     final userModel = ModalRoute.of(context)!.settings.arguments as UserModel;
 
+    return ChangeNotifierProvider(
+      create: (_) => VerificationFormProvider(),
+      child: VerificationLoginScaffold(
+          themeProvider: themeProvider, userModel: userModel),
+    );
+  }
+}
+
+class VerificationLoginScaffold extends StatelessWidget {
+  const VerificationLoginScaffold({
+    Key? key,
+    required this.themeProvider,
+    required this.userModel,
+  }) : super(key: key);
+
+  final ThemeProvider themeProvider;
+  final UserModel userModel;
+
+  @override
+  Widget build(BuildContext context) {
     return ScaffoldPage(
       content: Stack(
         children: [
           SwitcherTheme(themeProvider: themeProvider),
           Center(
             child: Form(
-              key: verificationForm.formKey,
+              key: Provider.of<VerificationFormProvider>(context).formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -31,7 +50,9 @@ class VerificationLoginPage extends StatelessWidget {
                   const Text(
                       'Ingresa el código enviado por correo electrónico'),
                   const SizedBox(height: 20),
-                  LoginCodeInput(verificationForm: verificationForm),
+                  LoginCodeInput(
+                      verificationForm:
+                          Provider.of<VerificationFormProvider>(context)),
                   const SizedBox(height: 20),
                   LoginSendCodeButton(userModel: userModel),
                   const SizedBox(height: 40),

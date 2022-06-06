@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:toy_cryptocurrency_frontend/preferences/aes_encrypt.dart';
+
 UserResponse userResponseFromJson(String str) =>
     UserResponse.fromJson(json.decode(str));
 String userResponseToJson(UserResponse data) => json.encode(data.toJson());
@@ -55,24 +57,28 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
         id: json['id'],
-        firstName: json['firstName'],
-        lastName: json['lastName'],
-        country: json['country'],
+        firstName: AESEncrypt.decryptString(json['firstName']),
+        lastName: AESEncrypt.decryptString(json['lastName']),
+        country: AESEncrypt.decryptString(json['country']),
         email: json['email'],
-        password: json['password'],
-        publicKey: json['publicKey'],
-        privateKey: json['privateKey'],
+        password: AESEncrypt.decryptString(json['password']),
+        publicKey: AESEncrypt.decryptString(json['publicKey']),
+        privateKey: AESEncrypt.decryptString(json['privateKey']),
       );
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'firstName': firstName,
-        'lastName': lastName,
-        'country': country,
+        'firstName':
+            (firstName == null) ? '' : AESEncrypt.encryptString(firstName!),
+        'lastName':
+            (lastName == null) ? '' : AESEncrypt.encryptString(lastName!),
+        'country': (country == null) ? '' : AESEncrypt.encryptString(country!),
         'email': email,
-        'password': password,
-        'publicKey': publicKey,
-        'privateKey': privateKey,
+        'password': AESEncrypt.encryptString(password!),
+        'publicKey':
+            (publicKey == null) ? '' : AESEncrypt.encryptString(publicKey!),
+        'privateKey':
+            (privateKey == null) ? '' : AESEncrypt.encryptString(privateKey!),
       };
 
   UserModel copy() => UserModel(
