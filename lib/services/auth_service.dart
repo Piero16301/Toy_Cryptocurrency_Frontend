@@ -10,8 +10,8 @@ import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
 
 class AuthService extends ChangeNotifier {
   // URL Backend
-  final String _baseUrl = '40.124.84.39';
-  // final String _baseUrl = '127.0.0.1:80';
+  // final String _baseUrl = '40.124.84.39';
+  final String _baseUrl = '127.0.0.1:80';
 
   // Se usa encriptación AES para Windows, Linux y MacOS
   final storage = const FlutterSecureStorage();
@@ -87,14 +87,11 @@ class AuthService extends ChangeNotifier {
       Preferences.userCountry =
           AESEncrypt.decryptString(decodedData['data']['country']);
       Preferences.userEmail = decodedData['data']['email'];
-      Preferences.userPublicKey =
-          AESEncrypt.decryptString(decodedData['data']['publicKey']);
-      Preferences.userPrivateKey =
-          AESEncrypt.decryptString(decodedData['data']['privateKey']);
+      Preferences.userPublicKey = decodedData['data']['publicKey'];
+      Preferences.userPrivateKey = decodedData['data']['privateKey'];
       // Guardar llave privada en el cliente
       await storage.write(
-          key: 'privateKey',
-          value: AESEncrypt.decryptString(decodedData['data']['privateKey']));
+          key: 'privateKey', value: decodedData['data']['privateKey']);
       return null;
     } else {
       return decodedData['message'];

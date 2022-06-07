@@ -263,12 +263,10 @@ class RegisterButtonForm extends StatelessWidget {
 
                 // Convertir llaves pública y privada a strings
                 RsaKeyHelper rsaKeyHelper = RsaKeyHelper();
-                String publicKey = rsaKeyHelper.removePemHeaderAndFooter(
-                    rsaKeyHelper.encodePublicKeyToPemPKCS1(
-                        keyPair.publicKey as crypto.RSAPublicKey));
-                String privateKey = rsaKeyHelper.removePemHeaderAndFooter(
-                    rsaKeyHelper.encodePrivateKeyToPemPKCS1(
-                        keyPair.privateKey as crypto.RSAPrivateKey));
+                String publicKey = rsaKeyHelper.encodePublicKeyToPemPKCS1(
+                    keyPair.publicKey as crypto.RSAPublicKey);
+                String privateKey = rsaKeyHelper.encodePrivateKeyToPemPKCS1(
+                    keyPair.privateKey as crypto.RSAPrivateKey);
 
                 // Crear objeto UserModel y enviar POST
                 UserModel userModel = UserModel(
@@ -279,6 +277,8 @@ class RegisterButtonForm extends StatelessWidget {
                   password: registerForm.password,
                   publicKey: publicKey,
                   privateKey: privateKey,
+                  privateKeyEncrypted:
+                      rsaKeyHelper.removePemHeaderAndFooter(privateKey),
                 );
                 final String? errorMessage =
                     await authService.sendSecurityCodeRegister(userModel);

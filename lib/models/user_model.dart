@@ -43,6 +43,7 @@ class UserModel {
   String? password;
   String? publicKey;
   String? privateKey;
+  String? privateKeyEncrypted;
 
   UserModel({
     this.id,
@@ -53,6 +54,7 @@ class UserModel {
     this.password,
     this.publicKey,
     this.privateKey,
+    this.privateKeyEncrypted,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -64,6 +66,7 @@ class UserModel {
         password: AESEncrypt.decryptString(json['password']),
         publicKey: json['publicKey'],
         privateKey: json['privateKey'],
+        privateKeyEncrypted: json['privateKeyEncrypted'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -77,6 +80,7 @@ class UserModel {
         'password': AESEncrypt.encryptString(password!),
         'publicKey': publicKey,
         'privateKey': privateKey,
+        'privateKeyEncrypted': privateKeyEncrypted,
       };
 
   UserModel copy() => UserModel(
@@ -88,5 +92,6 @@ class UserModel {
         password: password,
         publicKey: publicKey,
         privateKey: privateKey,
+        privateKeyEncrypted: privateKeyEncrypted,
       );
 }
