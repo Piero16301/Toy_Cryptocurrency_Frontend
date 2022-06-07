@@ -1,7 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:toy_cryptocurrency_frontend/models/models.dart';
+import 'package:rsa_encrypt/rsa_encrypt.dart';
+import 'package:pointycastle/pointycastle.dart' as crypto;
 
+import 'package:toy_cryptocurrency_frontend/models/models.dart';
 import 'package:toy_cryptocurrency_frontend/providers/providers.dart';
 import 'package:toy_cryptocurrency_frontend/services/services.dart';
 import 'package:toy_cryptocurrency_frontend/values/values.dart';
@@ -254,6 +256,20 @@ class RegisterButtonForm extends StatelessWidget {
                     Provider.of<AuthService>(context, listen: false);
                 registerForm.isLoading = true;
 
+                // Crear llaves pública y privada
+                Future<crypto.AsymmetricKeyPair> futureKeyPair =
+                    generateKeyPair();
+                crypto.AsymmetricKeyPair keyPair = await futureKeyPair;
+
+                // Convertir llaves pública y privada a strings
+                RsaKeyHelper rsaKeyHelper = RsaKeyHelper();
+                String publicKey = rsaKeyHelper.removePemHeaderAndFooter(
+                    rsaKeyHelper.encodePublicKeyToPemPKCS1(
+                        keyPair.publicKey as crypto.RSAPublicKey));
+                String privateKey = rsaKeyHelper.removePemHeaderAndFooter(
+                    rsaKeyHelper.encodePrivateKeyToPemPKCS1(
+                        keyPair.privateKey as crypto.RSAPrivateKey));
+
                 // Crear objeto UserModel y enviar POST
                 UserModel userModel = UserModel(
                   firstName: registerForm.firstName,
@@ -261,8 +277,8 @@ class RegisterButtonForm extends StatelessWidget {
                   country: registerForm.country,
                   email: registerForm.email,
                   password: registerForm.password,
-                  publicKey: "Public Key",
-                  privateKey: "Private Key",
+                  publicKey: publicKey,
+                  privateKey: privateKey,
                 );
                 final String? errorMessage =
                     await authService.sendSecurityCodeRegister(userModel);
@@ -283,6 +299,12 @@ class RegisterButtonForm extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<crypto.AsymmetricKeyPair<crypto.PublicKey, crypto.PrivateKey>>
+      generateKeyPair() {
+    var helper = RsaKeyHelper();
+    return helper.computeRSAKeyPair(helper.getSecureRandom());
   }
 
   void _showErrorDialog(BuildContext context, String errorMessage) {

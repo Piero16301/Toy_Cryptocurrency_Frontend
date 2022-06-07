@@ -62,8 +62,8 @@ class UserModel {
         country: AESEncrypt.decryptString(json['country']),
         email: json['email'],
         password: AESEncrypt.decryptString(json['password']),
-        publicKey: AESEncrypt.decryptString(json['publicKey']),
-        privateKey: AESEncrypt.decryptString(json['privateKey']),
+        publicKey: json['publicKey'],
+        privateKey: json['privateKey'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -75,10 +75,8 @@ class UserModel {
         'country': (country == null) ? '' : AESEncrypt.encryptString(country!),
         'email': email,
         'password': AESEncrypt.encryptString(password!),
-        'publicKey':
-            (publicKey == null) ? '' : AESEncrypt.encryptString(publicKey!),
-        'privateKey':
-            (privateKey == null) ? '' : AESEncrypt.encryptString(privateKey!),
+        'publicKey': publicKey,
+        'privateKey': privateKey,
       };
 
   UserModel copy() => UserModel(
