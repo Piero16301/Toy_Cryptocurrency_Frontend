@@ -6,7 +6,7 @@ class TransactionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage.scrollable(
-      header: const PageHeader(title: Text('Transactions Page')),
+      header: const PageHeader(title: Text('Transacciones')),
       children: const [],
     );
   }

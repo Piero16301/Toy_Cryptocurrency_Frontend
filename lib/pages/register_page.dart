@@ -256,18 +256,6 @@ class RegisterButtonForm extends StatelessWidget {
                     Provider.of<AuthService>(context, listen: false);
                 registerForm.isLoading = true;
 
-                // Crear llaves pública y privada
-                Future<crypto.AsymmetricKeyPair> futureKeyPair =
-                    generateKeyPair();
-                crypto.AsymmetricKeyPair keyPair = await futureKeyPair;
-
-                // Convertir llaves pública y privada a strings
-                RsaKeyHelper rsaKeyHelper = RsaKeyHelper();
-                String publicKey = rsaKeyHelper.encodePublicKeyToPemPKCS1(
-                    keyPair.publicKey as crypto.RSAPublicKey);
-                String privateKey = rsaKeyHelper.encodePrivateKeyToPemPKCS1(
-                    keyPair.privateKey as crypto.RSAPrivateKey);
-
                 // Crear objeto UserModel y enviar POST
                 UserModel userModel = UserModel(
                   firstName: registerForm.firstName,
@@ -275,10 +263,6 @@ class RegisterButtonForm extends StatelessWidget {
                   country: registerForm.country,
                   email: registerForm.email,
                   password: registerForm.password,
-                  publicKey: publicKey,
-                  privateKey: privateKey,
-                  privateKeyEncrypted:
-                      rsaKeyHelper.removePemHeaderAndFooter(privateKey),
                 );
                 final String? errorMessage =
                     await authService.sendSecurityCodeRegister(userModel);

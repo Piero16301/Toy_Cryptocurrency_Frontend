@@ -5,13 +5,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:toy_cryptocurrency_frontend/models/models.dart';
-import 'package:toy_cryptocurrency_frontend/preferences/aes_encrypt.dart';
 import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
 
 class AuthService extends ChangeNotifier {
   // URL Backend
-  // final String _baseUrl = '40.124.84.39';
-  final String _baseUrl = '127.0.0.1:80';
+  final String _baseUrl = '40.124.84.39';
+  // final String _baseUrl = '127.0.0.1:80';
 
   // Se usa encriptación AES para Windows, Linux y MacOS
   final storage = const FlutterSecureStorage();
@@ -39,16 +38,20 @@ class AuthService extends ChangeNotifier {
     if (decodedData == null) return 'Error de conexión con el servidor';
 
     if (decodedData['status'] == 201) {
+      UserModel userModelResponse =
+          userModelFromJson(json.encode(decodedData['data']));
+
       // Guardar datos del usuario en las preferencias
-      Preferences.userId = decodedData['data']['InsertedID'];
-      Preferences.userFirstName = userModel.firstName!;
-      Preferences.userLastName = userModel.lastName!;
-      Preferences.userCountry = userModel.country!;
-      Preferences.userEmail = userModel.email!;
-      Preferences.userPublicKey = userModel.publicKey!;
-      Preferences.userPrivateKey = userModel.privateKey!;
+      Preferences.userId = userModelResponse.id!;
+      Preferences.userFirstName = userModelResponse.firstName!;
+      Preferences.userLastName = userModelResponse.lastName!;
+      Preferences.userCountry = userModelResponse.country!;
+      Preferences.userEmail = userModelResponse.email!;
+      Preferences.userPublicKey = userModelResponse.publicKey!;
+      Preferences.userPrivateKey = userModelResponse.privateKey!;
       // Guardar llave privada en el cliente
-      await storage.write(key: 'privateKey', value: userModel.privateKey);
+      await storage.write(
+          key: 'privateKey', value: userModelResponse.privateKey);
       return null;
     } else {
       return decodedData['message'];
@@ -78,20 +81,20 @@ class AuthService extends ChangeNotifier {
     if (decodedData == null) return 'Error de conexión con el servidor';
 
     if (decodedData['status'] == 200) {
+      UserModel userModelResponse =
+          userModelFromJson(json.encode(decodedData['data']));
+
       // Guardar datos del usuario en las preferencias
-      Preferences.userId = decodedData['data']['id'];
-      Preferences.userFirstName =
-          AESEncrypt.decryptString(decodedData['data']['firstName']);
-      Preferences.userLastName =
-          AESEncrypt.decryptString(decodedData['data']['lastName']);
-      Preferences.userCountry =
-          AESEncrypt.decryptString(decodedData['data']['country']);
-      Preferences.userEmail = decodedData['data']['email'];
-      Preferences.userPublicKey = decodedData['data']['publicKey'];
-      Preferences.userPrivateKey = decodedData['data']['privateKey'];
+      Preferences.userId = userModelResponse.id!;
+      Preferences.userFirstName = userModelResponse.firstName!;
+      Preferences.userLastName = userModelResponse.lastName!;
+      Preferences.userCountry = userModelResponse.country!;
+      Preferences.userEmail = userModelResponse.email!;
+      Preferences.userPublicKey = userModelResponse.publicKey!;
+      Preferences.userPrivateKey = userModelResponse.privateKey!;
       // Guardar llave privada en el cliente
       await storage.write(
-          key: 'privateKey', value: decodedData['data']['privateKey']);
+          key: 'privateKey', value: userModelResponse.privateKey);
       return null;
     } else {
       return decodedData['message'];

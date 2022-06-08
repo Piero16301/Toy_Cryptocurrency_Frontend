@@ -45,27 +45,19 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  DefaultTextStyle(
-                    style: FluentTheme.of(context)
-                        .typography
-                        .bodyLarge!
-                        .copyWith(fontWeight: FontWeight.bold),
-                    child: Text(
-                        '${Preferences.userFirstName} ${Preferences.userLastName}'),
-                  ),
-                  DefaultTextStyle(
-                    style: FluentTheme.of(context).typography.body!,
-                    child: Text(
-                        '${Preferences.userEmail} - ${Preferences.userCountry}'),
-                  ),
+                  TextButton(
+                      child: DefaultTextStyle(
+                        style: FluentTheme.of(context)
+                            .typography
+                            .bodyStrong!
+                            .copyWith(fontSize: 20),
+                        child: const Text('Salir'),
+                      ),
+                      onPressed: () => _showLogoutOptions(context)),
                 ],
               ),
-              const SizedBox(width: 10),
-              IconButton(
-                  icon: const Icon(FluentIcons.close_pane, size: 30),
-                  onPressed: () => _showLogoutOptions(context)),
             ],
           ),
         ),
@@ -81,11 +73,15 @@ class _HomePageState extends State<HomePage> {
         items: [
           PaneItem(
             icon: const Icon(FluentIcons.money),
-            title: const Text('Saldo'),
+            title: const Text('Transacciones'),
           ),
           PaneItem(
-            icon: const Icon(FluentIcons.all_apps),
-            title: const Text('Transacciones'),
+            icon: const Icon(FluentIcons.cloud_secure),
+            title: const Text('Blockchain'),
+          ),
+          PaneItem(
+            icon: const Icon(FluentIcons.user_followed),
+            title: const Text('Perfil'),
           ),
         ],
         selected: _currentPage,
@@ -106,8 +102,9 @@ class _HomePageState extends State<HomePage> {
       content: NavigationBody(
         index: _currentPage,
         children: const [
-          BalancePage(),
           TransactionsPage(),
+          BlockchainPage(),
+          ProfilePage(),
           SettingsPage(),
         ],
       ),
