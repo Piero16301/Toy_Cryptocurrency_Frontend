@@ -2,12 +2,46 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:toy_cryptocurrency_frontend/providers/providers.dart';
+import 'package:toy_cryptocurrency_frontend/services/services.dart';
 
-class TransactionsPage extends StatelessWidget {
+class TransactionsPage extends StatefulWidget {
   const TransactionsPage({Key? key}) : super(key: key);
 
   @override
+  State<TransactionsPage> createState() => _TransactionsPageState();
+}
+
+class _TransactionsPageState extends State<TransactionsPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      Provider.of<BlockService>(context, listen: false).getAvailableUsers();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final blockService = Provider.of<BlockService>(context);
+
+    if (blockService.isLoadingUsers) {
+      return ScaffoldPage(
+        header: const PageHeader(title: Text('Transacciones')),
+        content: Center(
+          child: ProgressRing(activeColor: Colors.green),
+        ),
+      );
+    }
+
+    if (blockService.availableUsers.isEmpty) {
+      return const ScaffoldPage(
+        header: PageHeader(title: Text('Transacciones')),
+        content: Center(
+          child: Text('No hay más usuarios registrados'),
+        ),
+      );
+    }
+
     return ChangeNotifierProvider(
       create: (_) => TransactionFormProvider(),
       child: ScaffoldPage(
@@ -66,52 +100,25 @@ class AvailableBalance extends StatelessWidget {
 }
 
 class AvailableUsersList extends StatelessWidget {
-  AvailableUsersList({
+  const AvailableUsersList({
     Key? key,
   }) : super(key: key);
 
-  final _usuarios = [
-    'Piero UTEC',
-    'Pedro UTEC',
-    'Piero UTEC',
-    'Pedro UTEC',
-    'Piero UTEC',
-    'Pedro UTEC',
-    'Piero UTEC',
-    'Pedro UTEC',
-    'Piero UTEC',
-    'Pedro UTEC',
-    'Piero UTEC',
-    'Pedro UTEC',
-  ];
-
-  final _emails = [
-    'piero.morales@utec.ed',
-    'juan.utec@utec.edu.pe',
-    'piero.morales@utec.ed',
-    'juan.utec@utec.edu.pe',
-    'piero.morales@utec.ed',
-    'juan.utec@utec.edu.pe',
-    'piero.morales@utec.ed',
-    'juan.utec@utec.edu.pe',
-    'piero.morales@utec.ed',
-    'juan.utec@utec.edu.pe',
-    'piero.morales@utec.ed',
-    'juan.utec@utec.edu.pe',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final blockService = Provider.of<BlockService>(context);
+
     return ListView.builder(
-      itemCount: _usuarios.length,
+      itemCount: blockService.availableUsers.length,
       itemBuilder: (context, index) {
-        final title = _usuarios.elementAt(index);
-        final subtitle = _emails.elementAt(index);
+        final title =
+            '${blockService.availableUsers[index].firstName} ${blockService.availableUsers[index].lastName}';
+        final subtitle = blockService.availableUsers[index].email;
         return AvailableUserListTile(
             title: title,
-            subtitle: subtitle,
+            subtitle: subtitle!,
             index: index,
-            usuarios: _usuarios);
+            listLength: blockService.availableUsers.length);
       },
     );
   }
@@ -123,14 +130,13 @@ class AvailableUserListTile extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.index,
-    required List<String> usuarios,
-  })  : _usuarios = usuarios,
-        super(key: key);
+    required this.listLength,
+  }) : super(key: key);
 
   final String title;
   final String subtitle;
   final int index;
-  final List<String> _usuarios;
+  final int listLength;
 
   @override
   Widget build(BuildContext context) {
@@ -149,9 +155,9 @@ class AvailableUserListTile extends StatelessWidget {
                     backgroundColor: Colors.green,
                     child: DefaultTextStyle(
                         style: FluentTheme.of(context).typography.title!,
-                        child: const Text(
-                          'P',
-                          style: TextStyle(color: Colors.white),
+                        child: Text(
+                          title[0].toUpperCase(),
+                          style: const TextStyle(color: Colors.white),
                         )),
                   ),
                   title: Text(title),
@@ -188,7 +194,7 @@ class AvailableUserListTile extends StatelessWidget {
             ],
           ),
         ),
-        (index != _usuarios.length - 1) ? const Divider() : Container(),
+        (index != listLength - 1) ? const Divider() : Container(),
       ],
     );
   }

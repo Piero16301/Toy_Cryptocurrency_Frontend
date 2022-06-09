@@ -9,8 +9,8 @@ import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
 
 class AuthService extends ChangeNotifier {
   // URL Backend
-  final String _baseUrl = '40.124.84.39';
-  // final String _baseUrl = '127.0.0.1:80';
+  // final String _baseUrl = '40.124.84.39';
+  final String _baseUrl = '127.0.0.1:80';
 
   // Se usa encriptación AES para Windows, Linux y MacOS
   final storage = const FlutterSecureStorage();

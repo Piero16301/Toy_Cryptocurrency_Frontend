@@ -37,6 +37,7 @@ class AppState extends StatelessWidget {
         ChangeNotifierProvider(
             create: (_) => ThemeProvider(isDarkMode: Preferences.isDarkMode)),
         ChangeNotifierProvider(create: (_) => AuthService()),
+        ChangeNotifierProvider(create: (_) => BlockService()),
       ],
       child: const MyApp(),
     );
