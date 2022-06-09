@@ -17,10 +17,11 @@ class TransactionsPage extends StatelessWidget {
           child: SizedBox(
             width: double.infinity,
             height: double.infinity,
-            // color: Colors.red,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const AvailableBalance(),
+                const SizedBox(height: 10),
                 const AvailableUsersTitle(),
                 Expanded(
                   child: SizedBox(
@@ -33,6 +34,32 @@ class TransactionsPage extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class AvailableBalance extends StatelessWidget {
+  const AvailableBalance({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          DefaultTextStyle(
+            style: FluentTheme.of(context).typography.subtitle!,
+            child: const Text('Saldo disponible'),
+          ),
+          DefaultTextStyle(
+            style: FluentTheme.of(context).typography.display!,
+            child: const Text('\$0.00'),
+          ),
+        ],
       ),
     );
   }
