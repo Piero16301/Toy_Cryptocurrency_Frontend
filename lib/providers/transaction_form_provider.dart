@@ -1,12 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
-class VerificationFormProvider extends ChangeNotifier {
+class TransactionFormProvider extends ChangeNotifier {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  String firstDigit = '';
-  String secondDigit = '';
-  String thirdDigit = '';
-  String fourthDigit = '';
+  double ammount = 0.0;
 
   bool _isLoading = false;
 

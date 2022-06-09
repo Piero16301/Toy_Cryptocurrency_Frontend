@@ -94,7 +94,8 @@ class UserDataBlock extends StatelessWidget {
                   .typography
                   .title!
                   .copyWith(fontSize: 80),
-              child: Text(Preferences.userFirstName[0].toUpperCase())),
+              child: Text(Preferences.userFirstName[0].toUpperCase(),
+                  style: const TextStyle(color: Colors.white))),
         ),
         const SizedBox(width: 20),
         Expanded(
