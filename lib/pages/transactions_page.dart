@@ -1,6 +1,10 @@
+import 'package:encrypt/encrypt.dart' as crypto;
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:rsa_encrypt/rsa_encrypt.dart';
+import 'package:toy_cryptocurrency_frontend/models/models.dart';
+import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
 import 'package:toy_cryptocurrency_frontend/providers/providers.dart';
 import 'package:toy_cryptocurrency_frontend/services/services.dart';
 
@@ -53,10 +57,10 @@ class _TransactionsPageState extends State<TransactionsPage> {
             height: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const AvailableBalance(),
-                const SizedBox(height: 10),
-                const AvailableUsersTitle(),
+              children: const [
+                AvailableBalance(),
+                SizedBox(height: 10),
+                AvailableUsersTitle(),
                 Expanded(
                   child: SizedBox(
                     width: double.infinity,
@@ -69,6 +73,20 @@ class _TransactionsPageState extends State<TransactionsPage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class AvailableUsersTitle extends StatelessWidget {
+  const AvailableUsersTitle({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTextStyle(
+      style: FluentTheme.of(context).typography.subtitle!,
+      child: const Text('Usuarios disponibles'),
     );
   }
 }
@@ -91,7 +109,7 @@ class AvailableBalance extends StatelessWidget {
           ),
           DefaultTextStyle(
             style: FluentTheme.of(context).typography.display!,
-            child: const Text('\$0.00'),
+            child: const Text('100.00'),
           ),
         ],
       ),
@@ -115,10 +133,12 @@ class AvailableUsersList extends StatelessWidget {
             '${blockService.availableUsers[index].firstName} ${blockService.availableUsers[index].lastName}';
         final subtitle = blockService.availableUsers[index].email;
         return AvailableUserListTile(
-            title: title,
-            subtitle: subtitle!,
-            index: index,
-            listLength: blockService.availableUsers.length);
+          title: title,
+          subtitle: subtitle!,
+          index: index,
+          listLength: blockService.availableUsers.length,
+          user: blockService.availableUsers[index],
+        );
       },
     );
   }
@@ -131,15 +151,20 @@ class AvailableUserListTile extends StatelessWidget {
     required this.subtitle,
     required this.index,
     required this.listLength,
+    required this.user,
   }) : super(key: key);
 
   final String title;
   final String subtitle;
   final int index;
   final int listLength;
+  final UserModel user;
 
   @override
   Widget build(BuildContext context) {
+    final blockService = Provider.of<BlockService>(context);
+    final transactionForm = Provider.of<TransactionFormProvider>(context);
+
     return Column(
       children: [
         SizedBox(
@@ -177,7 +202,10 @@ class AvailableUserListTile extends StatelessWidget {
                         ),
                       ),
                     ),
-                    onPressed: () => _showInsertAmount(context),
+                    onPressed: () {
+                      blockService.selectedUser = user;
+                      _showInsertAmount(context, transactionForm);
+                    },
                     child: const Center(
                       child: Text('Transferir',
                           style: TextStyle(
@@ -199,13 +227,14 @@ class AvailableUserListTile extends StatelessWidget {
     );
   }
 
-  void _showInsertAmount(BuildContext context) {
+  void _showInsertAmount(
+      BuildContext context, TransactionFormProvider transactionForm) {
     showDialog(
         context: context,
         builder: (_) => ContentDialog(
               title: const Text('Nueva transacción'),
               content: Form(
-                key: Provider.of<TransactionFormProvider>(context).formKey,
+                key: transactionForm.formKey,
                 child: SizedBox(
                   height: 125,
                   width: double.infinity,
@@ -217,9 +246,7 @@ class AvailableUserListTile extends StatelessWidget {
                         'Ingrese el monto a transferir',
                         style: TextStyle(fontSize: 16),
                       ),
-                      AmountInput(
-                          transactionForm:
-                              Provider.of<TransactionFormProvider>(context)),
+                      AmountInput(transactionForm: transactionForm),
                       const Align(
                           alignment: Alignment.centerRight,
                           child: Text('Use "." para separar decimales')),
@@ -232,7 +259,58 @@ class AvailableUserListTile extends StatelessWidget {
                   child: const Text('Cancelar'),
                   onPressed: () => Navigator.pop(context),
                 ),
-                FilledButton(child: const Text('Confirmar'), onPressed: () {}),
+                FilledButton(
+                    child: const Text('Confirmar'),
+                    onPressed: () async {
+                      FocusScope.of(context).unfocus();
+
+                      if (!transactionForm.isValidForm()) return;
+
+                      // Comenzar a cargar el loading
+                      final blockService =
+                          Provider.of<BlockService>(context, listen: false);
+                      transactionForm.isLoading = true;
+
+                      // Cerrar dialog
+                      Navigator.pop(context);
+
+                      // Crear objeto de transacción (comisión 5%)
+                      TransactionModel transactionModel = TransactionModel(
+                        from: Preferences.userEmail,
+                        to: blockService.selectedUser.email!,
+                        amount: transactionForm.ammount,
+                        fee: transactionForm.ammount * 0.05,
+                      );
+
+                      // Crear firma de transacción
+                      RsaKeyHelper rsaKeyHelper = RsaKeyHelper();
+                      final publicKey = rsaKeyHelper.parsePublicKeyFromPem(
+                          """-----BEGIN RSA PUBLIC KEY-----
+${Preferences.userPublicKey}
+-----END RSA PUBLIC KEY-----""");
+                      final privateKey = rsaKeyHelper.parsePrivateKeyFromPem(
+                          """-----BEGIN RSA PRIVATE KEY-----
+${Preferences.userPrivateKey}
+-----END RSA PRIVATE KEY-----""");
+                      final signer = crypto.Signer(crypto.RSASigner(
+                          crypto.RSASignDigest.SHA256,
+                          publicKey: publicKey,
+                          privateKey: privateKey));
+                      String signature = signer.sign('bloque firmado').base64;
+                      debugPrint('signature: $signature');
+
+                      // Enviar transacción al servidor
+                      final String? errorMessage = await blockService
+                          .newTransaction(transactionModel, signature);
+
+                      if (errorMessage != null) {
+                        transactionForm.isLoading = false;
+                        debugPrint('Bloque no insertado $errorMessage');
+                      } else {
+                        transactionForm.isLoading = false;
+                        debugPrint('Bloque insertado');
+                      }
+                    }),
               ],
             ));
   }
@@ -270,20 +348,6 @@ class AmountInput extends StatelessWidget {
           return null;
         },
       ),
-    );
-  }
-}
-
-class AvailableUsersTitle extends StatelessWidget {
-  const AvailableUsersTitle({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTextStyle(
-      style: FluentTheme.of(context).typography.subtitle!,
-      child: const Text('Usuarios disponibles'),
     );
   }
 }

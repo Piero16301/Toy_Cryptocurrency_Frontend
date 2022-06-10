@@ -8,8 +8,8 @@ import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
 
 class BlockService extends ChangeNotifier {
   // URL Backend
-  // final String _baseUrl = '40.124.84.39';
-  final String _baseUrl = '127.0.0.1:80';
+  final String _baseUrl = '40.124.84.39';
+  // final String _baseUrl = '127.0.0.1:80';
 
   List<UserModel> availableUsers = [];
   late UserModel selectedUser;
@@ -51,5 +51,24 @@ class BlockService extends ChangeNotifier {
     notifyListeners();
 
     return availableUsers;
+  }
+
+  Future<String?> newTransaction(
+      TransactionModel transaction, String signature) async {
+    // Hacer request para crear la transacción
+    final url = Uri.http(_baseUrl, '/newTransaction', {'signature': signature});
+    final response =
+        await http.post(url, body: transactionModelToJson(transaction));
+    final Map<String, dynamic>? decodedData = json.decode(response.body);
+
+    if (decodedData == null) {
+      return 'Error de conexión con el servidor';
+    }
+
+    if (decodedData['status'] == 200) {
+      return null;
+    } else {
+      return decodedData['message'];
+    }
   }
 }
