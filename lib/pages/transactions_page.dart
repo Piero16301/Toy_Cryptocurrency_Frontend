@@ -46,31 +46,35 @@ class _TransactionsPageState extends State<TransactionsPage> {
       );
     }
 
-    return ChangeNotifierProvider(
-      create: (_) => TransactionFormProvider(),
-      child: ScaffoldPage(
-        header: const PageHeader(title: Text('Transacciones')),
-        content: Padding(
-          padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
-          child: SizedBox(
-            width: double.infinity,
-            height: double.infinity,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                AvailableBalance(),
-                SizedBox(height: 10),
-                AvailableUsersTitle(),
-                Expanded(
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: double.infinity,
-                    child: AvailableUsersList(),
+    return ScaffoldPage(
+      header: const PageHeader(title: Text('Transacciones')),
+      content: Padding(
+        padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
+        child: Stack(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  AvailableBalance(),
+                  SizedBox(height: 10),
+                  AvailableUsersTitle(),
+                  Expanded(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: double.infinity,
+                      child: AvailableUsersList(),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+            if (Provider.of<TransactionFormProvider>(context).isLoading)
+              const Positioned(
+                  bottom: 0, right: 0, child: ProcessingTransactionCard()),
+          ],
         ),
       ),
     );
@@ -344,6 +348,33 @@ class AmountInput extends StatelessWidget {
           }
           return null;
         },
+      ),
+    );
+  }
+}
+
+class ProcessingTransactionCard extends StatelessWidget {
+  const ProcessingTransactionCard({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 250,
+      height: 60,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(0),
+          child: Column(
+            children: [
+              const Text('Procesando transacción...',
+                  style: TextStyle(fontSize: 14, fontFamily: 'RobotoMono')),
+              Expanded(child: Container()),
+              ProgressBar(activeColor: Colors.green),
+            ],
+          ),
+        ),
       ),
     );
   }
