@@ -297,7 +297,6 @@ ${Preferences.userPrivateKey}
                           publicKey: publicKey,
                           privateKey: privateKey));
                       String signature = signer.sign('bloque firmado').base64;
-                      debugPrint('signature: $signature');
 
                       // Enviar transacción al servidor
                       final String? errorMessage = await blockService
@@ -305,10 +304,8 @@ ${Preferences.userPrivateKey}
 
                       if (errorMessage != null) {
                         transactionForm.isLoading = false;
-                        debugPrint('Bloque no insertado $errorMessage');
                       } else {
                         transactionForm.isLoading = false;
-                        debugPrint('Bloque insertado');
                       }
                     }),
               ],

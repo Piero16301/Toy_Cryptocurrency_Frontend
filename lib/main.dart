@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:window_size/window_size.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:toy_cryptocurrency_frontend/pages/pages.dart';
 import 'package:toy_cryptocurrency_frontend/pages/verification_register.dart';
@@ -9,17 +11,18 @@ import 'package:toy_cryptocurrency_frontend/preferences/aes_encrypt.dart';
 import 'package:toy_cryptocurrency_frontend/providers/providers.dart';
 import 'package:toy_cryptocurrency_frontend/services/services.dart';
 import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
-import 'package:window_size/window_size.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Preferences.init();
   AESEncrypt.init();
 
-  // Modificación de mínimo tamaño de ventana
-  if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-    setWindowTitle('Toy Cryptocurrency');
-    setWindowMinSize(const Size(1920, 1080));
+  if (!kIsWeb) {
+    // Modificación de mínimo tamaño de ventana para desktop
+    if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+      setWindowTitle('Toy Cryptocurrency');
+      setWindowMinSize(const Size(1920, 1080));
+    }
   }
 
   runApp(const AppState());
