@@ -12,7 +12,7 @@ class AuthService extends ChangeNotifier {
   final String _baseUrl = '40.124.84.39';
   // final String _baseUrl = '127.0.0.1:80';
 
-  // Se usa encriptación AES para Windows, Linux y MacOS
+  // Se usa WebCrypto para web y AES para Windows, Linux y MacOS
   final storage = const FlutterSecureStorage();
 
   Future<String?> sendSecurityCodeRegister(UserModel userModel) async {
