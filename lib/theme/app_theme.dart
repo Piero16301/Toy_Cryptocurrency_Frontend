@@ -3,9 +3,11 @@ import 'package:fluent_ui/fluent_ui.dart';
 class AppTheme {
   static const Color primary = ColorTheme.orange;
 
-  static final ThemeData lightTheme = ThemeData.light();
+  static final ThemeData lightTheme =
+      ThemeData.light().copyWith(scaffoldBackgroundColor: Colors.white);
 
-  static final ThemeData darkTheme = ThemeData.dark();
+  static final ThemeData darkTheme = ThemeData.dark()
+      .copyWith(scaffoldBackgroundColor: const Color.fromRGBO(42, 42, 42, 1));
 }
 
 class ColorTheme {
