@@ -20,7 +20,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      Provider.of<BlockService>(context, listen: false).getAvailableUsers();
+      Provider.of<BlockService>(context, listen: false).getUsersAndBalance();
     });
   }
 
@@ -28,7 +28,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
   Widget build(BuildContext context) {
     final blockService = Provider.of<BlockService>(context);
 
-    if (blockService.isLoadingUsers) {
+    if (blockService.isLoadingUsersAndBalance) {
       return ScaffoldPage(
         header: const PageHeader(title: Text('Transacciones')),
         content: Center(
@@ -102,6 +102,8 @@ class AvailableBalance extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final blockService = Provider.of<BlockService>(context);
+
     return SizedBox(
       width: double.infinity,
       child: Column(
@@ -113,7 +115,7 @@ class AvailableBalance extends StatelessWidget {
           ),
           DefaultTextStyle(
             style: FluentTheme.of(context).typography.display!,
-            child: const Text('100.00'),
+            child: Text(blockService.balance.toStringAsFixed(3)),
           ),
         ],
       ),
@@ -308,8 +310,10 @@ ${Preferences.userPrivateKey}
 
                       if (errorMessage != null) {
                         transactionForm.isLoading = false;
+                        await blockService.getUserBalance();
                       } else {
                         transactionForm.isLoading = false;
+                        await blockService.getUserBalance();
                       }
                     }),
               ],

@@ -12,45 +12,70 @@ class BlockService extends ChangeNotifier {
   // final String _baseUrl = '127.0.0.1:80';
 
   List<UserModel> availableUsers = [];
+  double balance = 0;
   late UserModel selectedUser;
 
-  bool isLoadingUsers = false;
+  bool isLoadingUsersAndBalance = false;
 
   BlockService() {
-    getAvailableUsers();
+    getUsersAndBalance();
   }
 
-  Future<List<UserModel>> getAvailableUsers() async {
-    isLoadingUsers = true;
+  Future<List<UserModel>> getUsersAndBalance() async {
+    isLoadingUsersAndBalance = true;
     notifyListeners();
 
     // Hacer request para obtener el saldo del usuario
+    balance = await getUserBalance();
 
     // Hacer request para obtener la lista de usuarios disponibles
-    final url =
+    final urlUsers =
         Uri.http(_baseUrl, '/getAvailableUsers/${Preferences.userEmail}');
-    final response = await http.get(url);
-    final Map<String, dynamic>? decodedData = json.decode(response.body);
+    final responseUsers = await http.get(urlUsers);
+    final Map<String, dynamic>? decodedUsers = json.decode(responseUsers.body);
 
-    if (decodedData == null) {
-      isLoadingUsers = false;
+    if (decodedUsers == null) {
+      isLoadingUsersAndBalance = false;
       notifyListeners();
       return [];
     }
 
-    if (decodedData['data'] == null) {
-      isLoadingUsers = false;
+    if (decodedUsers['data'] == null) {
+      isLoadingUsersAndBalance = false;
       notifyListeners();
       return [];
     }
 
-    UserResponse userResponse = userResponseFromJson(response.body);
+    UserResponse userResponse = userResponseFromJson(responseUsers.body);
     availableUsers = userResponse.data;
 
-    isLoadingUsers = false;
+    isLoadingUsersAndBalance = false;
     notifyListeners();
 
     return availableUsers;
+  }
+
+  Future<double> getUserBalance() async {
+    isLoadingUsersAndBalance = true;
+    notifyListeners();
+
+    final urlBalance =
+        Uri.http(_baseUrl, '/getBalance/${Preferences.userEmail}');
+    final responseBalance = await http.get(urlBalance);
+    final Map<String, dynamic>? decodedBalance =
+        json.decode(responseBalance.body);
+
+    if (decodedBalance == null) {
+      balance = 0;
+      isLoadingUsersAndBalance = false;
+      notifyListeners();
+      return 0;
+    } else {
+      balance = decodedBalance['data']['balance'].toDouble();
+      isLoadingUsersAndBalance = false;
+      notifyListeners();
+      return decodedBalance['data']['balance'].toDouble();
+    }
   }
 
   Future<String?> newTransaction(
