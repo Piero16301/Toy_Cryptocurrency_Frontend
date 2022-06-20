@@ -29,7 +29,7 @@ class BlockService extends ChangeNotifier {
     notifyListeners();
 
     // Hacer request para obtener el saldo del usuario
-    balance = await getUserBalance();
+    balance = await getUserBalance(true);
 
     // Hacer request para obtener la lista de usuarios disponibles
     final urlUsers =
@@ -58,9 +58,11 @@ class BlockService extends ChangeNotifier {
     return availableUsers;
   }
 
-  Future<double> getUserBalance() async {
-    isLoadingUsersAndBalance = true;
-    notifyListeners();
+  Future<double> getUserBalance(bool initialLoad) async {
+    if (!initialLoad) {
+      isLoadingUsersAndBalance = true;
+      notifyListeners();
+    }
 
     final urlBalance =
         Uri.http(_baseUrl, '/getBalance/${Preferences.userEmail}');
@@ -70,13 +72,17 @@ class BlockService extends ChangeNotifier {
 
     if (decodedBalance == null) {
       balance = 0;
-      isLoadingUsersAndBalance = false;
-      notifyListeners();
+      if (!initialLoad) {
+        isLoadingUsersAndBalance = false;
+        notifyListeners();
+      }
       return 0;
     } else {
       balance = decodedBalance['data']['balance'].toDouble();
-      isLoadingUsersAndBalance = false;
-      notifyListeners();
+      if (!initialLoad) {
+        isLoadingUsersAndBalance = false;
+        notifyListeners();
+      }
       return decodedBalance['data']['balance'].toDouble();
     }
   }

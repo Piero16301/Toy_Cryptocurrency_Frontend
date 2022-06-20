@@ -310,10 +310,10 @@ ${Preferences.userPrivateKey}
 
                       if (errorMessage != null) {
                         transactionForm.isLoading = false;
-                        await blockService.getUserBalance();
+                        await blockService.getUserBalance(false);
                       } else {
                         transactionForm.isLoading = false;
-                        await blockService.getUserBalance();
+                        await blockService.getUserBalance(false);
                       }
                     }),
               ],
