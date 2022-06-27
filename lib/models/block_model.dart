@@ -31,7 +31,7 @@ class BlockModel {
         id: json['id'],
         index: json['index'],
         previousHash: json['previousHash'],
-        proof: json['proof'],
+        proof: (json['proof'] == null) ? 0 : json['proof'],
         timestamp: DateTime.parse(json['timestamp']),
         miner: json['miner'],
         signature: json['signature'],

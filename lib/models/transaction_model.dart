@@ -22,8 +22,8 @@ class TransactionModel {
       TransactionModel(
         from: json['from'],
         to: json['to'],
-        amount: (json['amount'] == null) ? null : json['amount'].toDouble(),
-        fee: (json['fee'] == null) ? null : json['fee'].toDouble(),
+        amount: (json['amount'] == null) ? 0.0 : json['amount'].toDouble(),
+        fee: (json['fee'] == null) ? 0.0 : json['fee'].toDouble(),
       );
 
   Map<String, dynamic> toJson() => {

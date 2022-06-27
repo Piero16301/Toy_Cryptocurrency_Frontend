@@ -38,10 +38,31 @@ class _TransactionsPageState extends State<TransactionsPage> {
     }
 
     if (blockService.availableUsers.isEmpty) {
-      return const ScaffoldPage(
-        header: PageHeader(title: Text('Transacciones')),
-        content: Center(
-          child: Text('No hay más usuarios registrados'),
+      return ScaffoldPage(
+        header: const PageHeader(title: Text('Transacciones')),
+        content: Padding(
+          padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
+          child: Stack(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    AvailableBalance(),
+                    SizedBox(height: 10),
+                    AvailableUsersTitle(),
+                    Expanded(
+                      child: Center(
+                        child: Text('No hay más usuarios registrados'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }

@@ -8,7 +8,7 @@ import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
 
 class BlockService extends ChangeNotifier {
   // URL Backend
-  final String _baseUrl = '40.124.84.39';
+  final String _baseUrl = '20.222.41.230';
   // final String _baseUrl = '127.0.0.1:80';
 
   List<UserModel> availableUsers = [];
