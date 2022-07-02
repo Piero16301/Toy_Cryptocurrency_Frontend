@@ -17,9 +17,11 @@ class BlockService extends ChangeNotifier {
   late UserModel selectedUser;
 
   List<BlockModel> blocks = [];
+  List<MinerModel> miners = [];
 
   bool isLoadingUsersAndBalance = false;
   bool isLoadingBlockchain = false;
+  bool isLoadingMiners = false;
 
   BlockService() {
     getUsersAndBalance();
@@ -141,5 +143,35 @@ class BlockService extends ChangeNotifier {
     notifyListeners();
 
     return blocks;
+  }
+
+  Future<List<MinerModel>> getMiners() async {
+    isLoadingMiners = true;
+    notifyListeners();
+
+    // Hacer request para obtener la lista de mineros
+    final url = Uri.http(_baseUrl[0], '/getMiners');
+    final response = await http.get(url);
+    final Map<String, dynamic>? decodedData = json.decode(response.body);
+
+    if (decodedData == null) {
+      isLoadingMiners = false;
+      notifyListeners();
+      return [];
+    }
+
+    if (decodedData['data'] == null) {
+      isLoadingMiners = false;
+      notifyListeners();
+      return [];
+    }
+
+    miners = List<MinerModel>.from(
+        decodedData['data'].map((miner) => MinerModel.fromJson(miner)));
+
+    isLoadingMiners = false;
+    notifyListeners();
+
+    return miners;
   }
 }

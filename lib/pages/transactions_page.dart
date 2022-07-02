@@ -3,6 +3,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:rsa_encrypt/rsa_encrypt.dart';
+
 import 'package:toy_cryptocurrency_frontend/models/models.dart';
 import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
 import 'package:toy_cryptocurrency_frontend/providers/providers.dart';

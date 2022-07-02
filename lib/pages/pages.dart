@@ -7,3 +7,4 @@ export 'register_page.dart';
 export 'settings_page.dart';
 export 'transactions_page.dart';
 export 'verification_login_page.dart';
+export 'miners_page.dart';

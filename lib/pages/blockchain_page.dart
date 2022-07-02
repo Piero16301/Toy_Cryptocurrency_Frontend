@@ -233,16 +233,22 @@ class BlockField extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-            width: titleWidth,
-            child: Text(title.toUpperCase(),
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, fontFamily: 'RobotoMono'))),
+          width: titleWidth,
+          child: Text(
+            title.toUpperCase(),
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontFamily: 'RobotoMono',
+            ),
+          ),
+        ),
         Expanded(
-            child: SelectableText(
-          content,
-          maxLines: 1,
-          style: const TextStyle(fontFamily: 'RobotoMono'),
-        )),
+          child: SelectableText(
+            content,
+            maxLines: 1,
+            style: const TextStyle(fontFamily: 'RobotoMono'),
+          ),
+        ),
       ],
     );
   }

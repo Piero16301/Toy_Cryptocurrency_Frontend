@@ -72,12 +72,16 @@ class _HomePageState extends State<HomePage> {
         ),
         items: [
           PaneItem(
-            icon: const Icon(FluentIcons.money),
+            icon: const Icon(FluentIcons.all_currency),
             title: const Text('Transacciones'),
           ),
           PaneItem(
             icon: const Icon(FluentIcons.cloud_secure),
             title: const Text('Blockchain'),
+          ),
+          PaneItem(
+            icon: const Icon(FluentIcons.teamwork),
+            title: const Text('Mineros'),
           ),
           PaneItem(
             icon: const Icon(FluentIcons.user_followed),
@@ -104,6 +108,7 @@ class _HomePageState extends State<HomePage> {
         children: const [
           TransactionsPage(),
           BlockchainPage(),
+          MinersPage(),
           ProfilePage(),
           SettingsPage(),
         ],
