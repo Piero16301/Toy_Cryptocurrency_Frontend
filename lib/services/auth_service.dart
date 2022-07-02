@@ -9,14 +9,14 @@ import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
 
 class AuthService extends ChangeNotifier {
   // URL Backend
-  final String _baseUrl = '20.222.41.230';
+  final List<String> _baseUrl = ['20.222.41.230', '40.124.84.39'];
   // final String _baseUrl = '127.0.0.1:80';
 
   // Se usa WebCrypto para web y AES para Windows, Linux y MacOS
   final storage = const FlutterSecureStorage();
 
   Future<String?> sendSecurityCodeRegister(UserModel userModel) async {
-    final url = Uri.http(_baseUrl, '/sendSecurityCodeRegister');
+    final url = Uri.http(_baseUrl[0], '/sendSecurityCodeRegister');
     final response = await http.post(url, body: userModelToJson(userModel));
     final Map<String, dynamic>? decodedData = json.decode(response.body);
 
@@ -31,7 +31,8 @@ class AuthService extends ChangeNotifier {
 
   Future<String?> verifySecurityCodeRegister(
       UserModel userModel, String securityCode) async {
-    final url = Uri.http(_baseUrl, '/verifySecurityCodeRegister/$securityCode');
+    final url =
+        Uri.http(_baseUrl[0], '/verifySecurityCodeRegister/$securityCode');
     final response = await http.post(url, body: userModelToJson(userModel));
     final Map<String, dynamic>? decodedData = json.decode(response.body);
 
@@ -59,7 +60,7 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<String?> sendSecurityCodeLogin(UserModel userModel) async {
-    final url = Uri.http(_baseUrl, '/sendSecurityCodeLogin');
+    final url = Uri.http(_baseUrl[0], '/sendSecurityCodeLogin');
     final response = await http.post(url, body: userModelToJson(userModel));
     final Map<String, dynamic>? decodedData = json.decode(response.body);
 
@@ -74,7 +75,7 @@ class AuthService extends ChangeNotifier {
 
   Future<String?> verifySecurityCodeLogin(
       UserModel userModel, String securityCode) async {
-    final url = Uri.http(_baseUrl, '/verifySecurityCodeLogin/$securityCode');
+    final url = Uri.http(_baseUrl[0], '/verifySecurityCodeLogin/$securityCode');
     final response = await http.post(url, body: userModelToJson(userModel));
     final Map<String, dynamic>? decodedData = json.decode(response.body);
 
