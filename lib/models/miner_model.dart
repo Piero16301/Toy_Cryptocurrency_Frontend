@@ -19,7 +19,7 @@ class MinerModel {
         index: json['index'],
         name: json['name'],
         blocksMined: json['blocksMined'],
-        totalCoins: json['totalCoins'],
+        totalCoins: json['totalCoins'].toDouble(),
         work: json['work'],
         workPercent: json['workPercent'],
       );

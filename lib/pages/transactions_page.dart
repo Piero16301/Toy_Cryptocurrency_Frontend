@@ -321,10 +321,13 @@ ${Preferences.userPublicKey}
                           """-----BEGIN RSA PRIVATE KEY-----
 ${Preferences.userPrivateKey}
 -----END RSA PRIVATE KEY-----""");
-                      final signer = crypto.Signer(crypto.RSASigner(
+                      final signer = crypto.Signer(
+                        crypto.RSASigner(
                           crypto.RSASignDigest.SHA256,
                           publicKey: publicKey,
-                          privateKey: privateKey));
+                          privateKey: privateKey,
+                        ),
+                      );
                       String signature = signer.sign('bloque firmado').base64;
 
                       // Enviar transacción al servidor

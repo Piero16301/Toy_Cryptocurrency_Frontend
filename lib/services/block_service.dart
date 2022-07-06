@@ -23,6 +23,9 @@ class BlockService extends ChangeNotifier {
   bool isLoadingBlockchain = false;
   bool isLoadingMiners = false;
 
+  int verificationState = 0;
+  String verificationMessage = '';
+
   BlockService() {
     getUsersAndBalance();
   }
@@ -173,5 +176,39 @@ class BlockService extends ChangeNotifier {
     notifyListeners();
 
     return miners;
+  }
+
+  Future<String?> verifyBlockchain() async {
+    verificationState = 1;
+    notifyListeners();
+
+    // Hacer request para verificar la blockchain
+    final url = Uri.http(_baseUrl[0], '/validateBlockchain');
+    final response = await http.get(url);
+    final Map<String, dynamic>? decodedData = json.decode(response.body);
+
+    if (decodedData == null) {
+      verificationState = 3;
+      verificationMessage = 'Error de conexión con el servidor';
+      notifyListeners();
+      return 'Error de conexión con el servidor';
+    }
+
+    if (decodedData['status'] == 200) {
+      verificationState = 2;
+      verificationMessage = decodedData['message'];
+      notifyListeners();
+      return null;
+    } else {
+      verificationState = 3;
+      verificationMessage = decodedData['message'];
+      notifyListeners();
+      return decodedData['message'];
+    }
+  }
+
+  void setInitialVerificationState() {
+    verificationState = 0;
+    notifyListeners();
   }
 }

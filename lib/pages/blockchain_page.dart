@@ -36,17 +36,100 @@ class _BlockchainPageState extends State<BlockchainPage> {
       header: const PageHeader(title: Text('Blockchain')),
       content: Padding(
         padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
-        child: SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Expanded(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: double.infinity,
+                      child: ListOfBlocks(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (Provider.of<BlockService>(context).verificationState == 0)
+              const Positioned(
+                bottom: 10,
+                right: 10,
+                child: VerifyBlockchainButton(),
+              ),
+            if (Provider.of<BlockService>(context).verificationState == 1)
+              const Positioned(
+                bottom: 0,
+                right: 0,
+                child: ProcessingBlockchainVerification(),
+              ),
+            if (Provider.of<BlockService>(context).verificationState == 2)
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: InfoBarMessage(
+                  success: true,
+                  message: blockService.verificationMessage,
+                ),
+              ),
+            if (Provider.of<BlockService>(context).verificationState == 3)
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: InfoBarMessage(
+                  success: false,
+                  message: blockService.verificationMessage,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class VerifyBlockchainButton extends StatelessWidget {
+  const VerifyBlockchainButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      child: FilledButton(
+        style: ButtonStyle(
+          backgroundColor: ButtonState.all<Color>(Colors.green),
+          shape: ButtonState.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+        onPressed: () async {
+          await Provider.of<BlockService>(context, listen: false)
+              .verifyBlockchain();
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Row(
             children: const [
-              Expanded(
-                child: SizedBox(
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: ListOfBlocks(),
+              Icon(
+                FluentIcons.skype_check,
+                size: 30,
+              ),
+              SizedBox(width: 10),
+              SizedBox(
+                width: 90,
+                child: Text(
+                  'Verificar blockchain',
+                  overflow: TextOverflow.clip,
+                  maxLines: 2,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    fontFamily: 'RobotoMono',
+                  ),
                 ),
               ),
             ],
@@ -54,6 +137,69 @@ class _BlockchainPageState extends State<BlockchainPage> {
         ),
       ),
     );
+  }
+}
+
+class ProcessingBlockchainVerification extends StatelessWidget {
+  const ProcessingBlockchainVerification({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 250,
+      height: 60,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(0),
+          child: Column(
+            children: [
+              const Text('Verificando blockchain...',
+                  style: TextStyle(fontSize: 14, fontFamily: 'RobotoMono')),
+              Expanded(child: Container()),
+              ProgressBar(activeColor: Colors.green),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class InfoBarMessage extends StatelessWidget {
+  const InfoBarMessage({
+    Key? key,
+    required this.success,
+    required this.message,
+  }) : super(key: key);
+
+  final bool success;
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    if (success) {
+      return InfoBar(
+        title: const Text('Éxito'),
+        content: Text(message),
+        isLong: false,
+        onClose: () {
+          Provider.of<BlockService>(context, listen: false)
+              .setInitialVerificationState();
+        },
+        severity: InfoBarSeverity.success,
+      );
+    } else {
+      return InfoBar(
+        title: const Text('Error'),
+        content: Text(message),
+        isLong: false,
+        onClose: () {
+          Provider.of<BlockService>(context, listen: false)
+              .setInitialVerificationState();
+        },
+        severity: InfoBarSeverity.error,
+      );
+    }
   }
 }
 
