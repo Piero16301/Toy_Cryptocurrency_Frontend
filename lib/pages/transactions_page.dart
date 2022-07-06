@@ -294,9 +294,10 @@ class AvailableUserListTile extends StatelessWidget {
 
                       if (!transactionForm.isValidForm()) return;
 
-                      // Comenzar a cargar el loading
                       final blockService =
                           Provider.of<BlockService>(context, listen: false);
+
+                      // Comenzar a cargar el loading
                       transactionForm.isLoading = true;
 
                       // Cerrar dialog
@@ -371,6 +372,12 @@ class AmountInput extends StatelessWidget {
           }
           if (double.tryParse(text) == null || double.tryParse(text)! <= 0) {
             return 'Ingrese un monto válido';
+          }
+          // Verificar que el saldo no sea mayor al que se tiene
+          final blockService =
+              Provider.of<BlockService>(context, listen: false);
+          if (transactionForm.ammount > blockService.balance) {
+            return 'No puede tranferir un saldo mayor al que tiene';
           }
           return null;
         },
