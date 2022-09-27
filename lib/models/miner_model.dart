@@ -21,7 +21,7 @@ class MinerModel {
         blocksMined: json['blocksMined'],
         totalCoins: json['totalCoins'].toDouble(),
         work: json['work'],
-        workPercent: json['workPercent'],
+        workPercent: json['workPercent'].toDouble(),
       );
 
   Map<String, dynamic> toJson() => {

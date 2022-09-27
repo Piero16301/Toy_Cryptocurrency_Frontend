@@ -9,8 +9,8 @@ import 'package:toy_cryptocurrency_frontend/preferences/preferences.dart';
 
 class BlockService extends ChangeNotifier {
   // URL Backend
-  final List<String> _baseUrl = ['20.222.41.230', '40.124.84.39'];
-  // final String _baseUrl = '127.0.0.1:80';
+  // final List<String> _baseUrl = ['20.222.41.230', '40.124.84.39'];
+  final String _baseUrl = '127.0.0.1:80';
 
   List<UserModel> availableUsers = [];
   double balance = 0;
@@ -38,8 +38,9 @@ class BlockService extends ChangeNotifier {
     balance = await getUserBalance(true);
 
     // Hacer request para obtener la lista de usuarios disponibles
+    // final urlUsers = Uri.http(_baseUrl[0], '/getAvailableUsers/${Preferences.userEmail}');
     final urlUsers =
-        Uri.http(_baseUrl[0], '/getAvailableUsers/${Preferences.userEmail}');
+        Uri.http(_baseUrl, '/getAvailableUsers/${Preferences.userEmail}');
     final responseUsers = await http.get(urlUsers);
     final Map<String, dynamic>? decodedUsers = json.decode(responseUsers.body);
 
@@ -70,8 +71,9 @@ class BlockService extends ChangeNotifier {
       notifyListeners();
     }
 
+    // final urlBalance = Uri.http(_baseUrl[0], '/getBalance/${Preferences.userEmail}');
     final urlBalance =
-        Uri.http(_baseUrl[0], '/getBalance/${Preferences.userEmail}');
+        Uri.http(_baseUrl, '/getBalance/${Preferences.userEmail}');
     final responseBalance = await http.get(urlBalance);
     final Map<String, dynamic>? decodedBalance =
         json.decode(responseBalance.body);
@@ -96,13 +98,13 @@ class BlockService extends ChangeNotifier {
   Future<String?> newTransaction(
       TransactionModel transaction, String signature) async {
     // Enviar request al servidor principal o réplica
-    Random r = Random();
-    bool isMain = r.nextBool();
-    String selectedServer = (isMain) ? _baseUrl[0] : _baseUrl[1];
+    // Random r = Random();
+    // bool isMain = r.nextBool();
+    // String selectedServer = (isMain) ? _baseUrl[0] : _baseUrl[1];
 
     // Hacer request para crear la transacción
-    final url =
-        Uri.http(selectedServer, '/newTransaction', {'signature': signature});
+    // final url = Uri.http(selectedServer, '/newTransaction', {'signature': signature});
+    final url = Uri.http(_baseUrl, '/newTransaction', {'signature': signature});
     final response =
         await http.post(url, body: transactionModelToJson(transaction));
     final Map<String, dynamic>? decodedData = json.decode(response.body);
@@ -123,7 +125,8 @@ class BlockService extends ChangeNotifier {
     notifyListeners();
 
     // Hacer request para obtener la lista de bloques
-    final url = Uri.http(_baseUrl[0], '/getBlockchain');
+    // final url = Uri.http(_baseUrl[0], '/getBlockchain');
+    final url = Uri.http(_baseUrl, '/getBlockchain');
     final response = await http.get(url);
     final Map<String, dynamic>? decodedData = json.decode(response.body);
 
@@ -153,7 +156,8 @@ class BlockService extends ChangeNotifier {
     notifyListeners();
 
     // Hacer request para obtener la lista de mineros
-    final url = Uri.http(_baseUrl[0], '/getMiners');
+    // final url = Uri.http(_baseUrl[0], '/getMiners');
+    final url = Uri.http(_baseUrl, '/getMiners');
     final response = await http.get(url);
     final Map<String, dynamic>? decodedData = json.decode(response.body);
 
@@ -183,7 +187,8 @@ class BlockService extends ChangeNotifier {
     notifyListeners();
 
     // Hacer request para verificar la blockchain
-    final url = Uri.http(_baseUrl[0], '/validateBlockchain');
+    // final url = Uri.http(_baseUrl[0], '/validateBlockchain');
+    final url = Uri.http(_baseUrl, '/validateBlockchain');
     final response = await http.get(url);
     final Map<String, dynamic>? decodedData = json.decode(response.body);
 
