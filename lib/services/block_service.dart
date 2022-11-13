@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:http/http.dart' as http;
@@ -191,6 +190,7 @@ class BlockService extends ChangeNotifier {
     final url = Uri.http(_baseUrl, '/validateBlockchain');
     final response = await http.get(url);
     final Map<String, dynamic>? decodedData = json.decode(response.body);
+    debugPrint(decodedData.toString());
 
     if (decodedData == null) {
       verificationState = 3;

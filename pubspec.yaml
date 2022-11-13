@@ -54,6 +54,7 @@ dev_dependencies:
     sdk: flutter
 
   msix: ^3.6.2
+  flutter_launcher_icons: ^0.10.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -103,6 +104,18 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_icons:
+  android: false
+  ios: false
+  image_path: "assets/app-logo.png"
+  web:
+    generate: true
+    image_path: "assets/app-logo.png"
+  windows:
+    generate: true
+    image_path: "assets/app-logo.png"
+    icon_size: 256
 
 # Compile with: >flutter pub run msix:publish
 msix_config:
